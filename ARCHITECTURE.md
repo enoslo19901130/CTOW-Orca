@@ -19,6 +19,8 @@ Orca is authoritative for:
 
 CTOW must not mirror these into a second mutable runtime database.
 
+The `ctow-start` command is a thin boundary adapter: it validates an approved Plan and invokes Orca `run-create`. It returns the Orca receipt and does not retain mutable Run state.
+
 ## Governance source of truth
 
 CTOW owns:
@@ -77,3 +79,7 @@ Terra owns canonical issue identity. Luna may propose a provisional key, but Sol
 Each issue that reaches Sol has governance progress under `.ctow/decision-progress/`: cycle count, previous escalation/decision provenance, unchanged facts, material evidence delta, and stagnation state. At cycle >=2 with the same decision question and no material delta, further targeted validation is forbidden.
 
 See ADR-0003.
+
+## Command boundary
+
+`ctow-plan` records planning intake and generates a Sol-ready prompt; it does not generate or approve architecture. `ctow-start` requires a validated Plan before creating an Orca Run and stops at the Terra handoff. See ADR-0004.

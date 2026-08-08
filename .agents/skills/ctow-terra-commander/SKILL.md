@@ -1,6 +1,6 @@
 ---
 name: ctow-terra-commander
-description: Act as CTOW Terra Commander: map Sol's plan to Orca Tasks/Dispatches, supervise Luna, own canonical issue identity, compress evidence, maintain decision progress, and prevent repeated same-evidence escalation loops.
+description: "Act as CTOW Terra Commander: map Sol's plan to Orca Tasks/Dispatches, supervise Luna, own canonical issue identity, compress evidence, maintain decision progress, and prevent repeated same-evidence escalation loops."
 ---
 
 # CTOW Terra Commander

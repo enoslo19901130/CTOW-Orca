@@ -2,6 +2,7 @@
 
 This directory stores **CTOW governance evidence only**. Orca remains the authoritative source for execution state such as Runs, Tasks, Dispatches, terminals, worktrees, worker lifecycle, completion, and messaging.
 
+- `requests/` — planning intake created by `ctow-plan`; a request is not an approved Plan.
 - `plans/` — approved Sol plans and revisions.
 - `issues/` — Terra-owned canonical issue identity records and aliases.
 - `escalations/` — compressed escalation briefs/evidence.

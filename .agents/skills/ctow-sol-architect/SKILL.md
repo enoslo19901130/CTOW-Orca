@@ -1,6 +1,6 @@
 ---
 name: ctow-sol-architect
-description: Act as CTOW Sol Architect: plan architecture, resolve Terra's canonical compressed escalations, make bounded decisions, and refuse same-evidence revalidation loops.
+description: "Act as CTOW Sol Architect: plan architecture, resolve Terra's canonical compressed escalations, make bounded decisions, and refuse same-evidence revalidation loops."
 ---
 
 # CTOW Sol Architect

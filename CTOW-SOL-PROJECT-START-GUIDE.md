@@ -60,6 +60,8 @@ Project/
 ├── AGENTS.md
 ├── .agents/
 │   └── skills/
+│       ├── ctow-operator/
+│       │   └── SKILL.md
 │       ├── ctow-sol-architect/
 │       │   └── SKILL.md
 │       ├── ctow-terra-commander/
@@ -69,6 +71,7 @@ Project/
 │       └── ctow-luna-independent-reviewer/
 │           └── SKILL.md
 ├── .ctow/
+│   ├── requests/
 │   ├── plans/
 │   ├── issues/
 │   ├── escalations/
@@ -90,6 +93,54 @@ Sol 啟動時應先理解：
 5. 現有 `.ctow/` governance evidence
 6. Repository 現況
 7. 使用者本次需求
+
+### 2.1 三條固定操作規則
+
+所有使用情境都先依意圖選擇入口，不因任務大小或緊急程度跳過治理流程：
+
+```text
+查詢狀態／接手既有工作 → ctow status
+提出全新需求           → ctow-plan "<任務目標>"
+啟動已核准 Plan        → ctow-start --plan <PLAN.yaml>
+```
+
+1. **查詢時先跑 `ctow status`**：先確認 Orca Runtime、目前 coordinator 綁定的 Run、既有 Run、planning request，以及有效或無效的 Plan。不要根據舊對話、terminal timeout 或 `.ctow/` 檔案猜測執行狀態。
+2. **新需求先跑 `ctow-plan`**：它只建立 planning request 與 Sol-ready Prompt，不代表 Plan 已核准，也不建立 Orca Run。
+3. **只有核准 Plan 才跑 `ctow-start`**：建議先加 `--dry-run` 驗證。正式執行只建立具權威性的 Orca Run，後續 Task DAG 與 Luna Dispatch 仍由 Terra 負責。
+
+正確：
+
+```bash
+ctow status
+ctow-plan "新增 API Key 管理"
+ctow-guard validate-plan .ctow/plans/PLAN-API-KEYS.yaml
+ctow-start --plan .ctow/plans/PLAN-API-KEYS.yaml --dry-run
+ctow-start --plan .ctow/plans/PLAN-API-KEYS.yaml
+```
+
+錯誤：
+
+```bash
+# 錯誤：新需求尚未經 Sol 規劃與核准，就嘗試開始執行
+ctow-start "新增 API Key 管理"
+
+# 錯誤：把 planning request 當成 approved Plan
+ctow-start --plan .ctow/requests/PLAN-REQUEST-API-KEYS.yaml
+```
+
+`ctow-start "<任務目標>"` 只是 approved Plan 的精確 goal 查找捷徑；找不到唯一且有效的 Plan 時必須拒絕啟動。
+
+### 2.2 情境與第一個指令
+
+| 使用情境 | 第一個指令 | 後續 |
+|---|---|---|
+| 想知道目前做到哪裡 | `ctow status` | 依 Orca receipt 判讀，不重建狀態 |
+| 全新專案或新增功能 | `ctow-plan "<目標>"` | Sol discovery → approved Plan |
+| Root cause 未知 Bug | `ctow-plan "調查：<症狀>"` | Sol 定義 hypothesis；必要時規劃 SWARM |
+| 已知原因的小型修復 | `ctow-plan "修復：<問題>"` | Sol 可核准 SMALL Plan，但不可跳過 Plan |
+| 大型 Refactor | `ctow-plan "重構：<目標與 invariant>"` | 高風險 Work Package 要求獨立審查 |
+| Security／Data Integrity | `ctow-plan "<高風險目標>"` | 明列 rollback、audit 與 review gate |
+| 已有 approved Plan | `ctow-start --plan <PLAN.yaml> --dry-run` | 預覽通過後才正式 `ctow-start` |
 
 ---
 
@@ -128,9 +179,15 @@ Sol 的價值集中於：
 ## 4. 標準專案啟動流程
 
 ```text
-USER
+USER / AGENT
  │
- │ 描述需求
+ ├─ 查詢／接手 ─────────────→ ctow status ─→ 判讀 Orca + Governance
+ │
+ └─ 新需求 ─────────────────→ ctow-plan "<目標>"
+                                  │
+                                  ▼
+                           Planning Request
+                                  │
  ▼
 SOL
  │
@@ -145,6 +202,10 @@ SOL
  │
  ▼
 CTOW PLAN
+ │
+ ├─ ctow-guard validate-plan
+ ├─ ctow-start --plan <PLAN.yaml> --dry-run
+ └─ ctow-start --plan <PLAN.yaml>
  │
  ▼
 TERRA

@@ -1,0 +1,4 @@
+interface:
+  display_name: "CTOW Operator"
+  short_description: "Operate CTOW planning, start, and status commands"
+  default_prompt: "Use $ctow-operator to inspect CTOW status and choose the next governed action."

@@ -17,6 +17,10 @@ dev = ["pytest>=8,<10"]
 
 [project.scripts]
 ctow-guard = "ctow_guard.cli:main"
+ctow = "ctow_guard.workflow_cli:main"
+ctow-plan = "ctow_guard.workflow_cli:plan_entry"
+ctow-start = "ctow_guard.workflow_cli:start_entry"
+ctow-status = "ctow_guard.workflow_cli:status_entry"
 
 [tool.setuptools.packages.find]
 where = ["src"]

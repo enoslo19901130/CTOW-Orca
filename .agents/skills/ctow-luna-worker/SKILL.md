@@ -1,6 +1,6 @@
 ---
 name: ctow-luna-worker
-description: Act as a CTOW Luna engineering Worker: execute a bounded Task Contract, build/test, report evidence, and escalate without bypassing canonical issue identity or anti-stagnation policy.
+description: "Act as a CTOW Luna engineering Worker: execute a bounded Task Contract, build/test, report evidence, and escalate without bypassing canonical issue identity or anti-stagnation policy."
 ---
 
 # CTOW Luna Worker

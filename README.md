@@ -60,6 +60,38 @@ python scripts/verify_skills.py
 
 The model names in `config/agents.yaml` express policy intent. Verify the effective model and reasoning effort reported by the installed Orca/Codex runtime; CTOW must not silently downgrade them.
 
+## Command entry points
+
+Always select the command by intent:
+
+```text
+Inspect existing work → ctow status
+Submit a new goal     → ctow-plan "<goal>"
+Start approved work   → ctow-start --plan <PLAN.yaml>
+```
+
+Query authoritative Runtime state and local governance progress first when inspecting or taking over work:
+
+```bash
+ctow status
+# equivalent: ctow-status
+```
+
+For a new requirement, create a planning request:
+
+```bash
+ctow-plan "Add API key management"
+```
+
+This records a planning request and produces a Sol-ready prompt. After Sol writes and validates an approved Plan, preview and start its authoritative Orca Run:
+
+```bash
+ctow-start --plan .ctow/plans/PLAN-API-KEYS.yaml --dry-run
+ctow-start --plan .ctow/plans/PLAN-API-KEYS.yaml
+```
+
+The unified forms `ctow plan` and `ctow start` are equivalent. `ctow-start "<exact goal>"` can resolve one matching validated Plan under `.ctow/plans/`; it is only a lookup convenience and never skips planning. These commands stop at the Terra handoff and do not implement a second scheduler or Worker runtime. See [Command Entry Points](docs/COMMANDS.md).
+
 ## Start a project
 
 The normal entry point is the User speaking to Sol. Provide the goal, constraints, authoritative documents, acceptance criteria, and anything that must not change. Sol performs discovery and planning before implementation; Terra then maps the approved plan into Orca Tasks and dispatches Luna workers.
@@ -206,7 +238,7 @@ ctow-guard validate-decision-progress examples/DECISION-PROGRESS-DEMO.yaml
 | Path | Purpose |
 |---|---|
 | `AGENTS.md` | Entry rules for agents opening the repository |
-| `.agents/skills/` | Sol, Terra, Luna, and independent-review role contracts |
+| `.agents/skills/` | CTOW operator plus Sol, Terra, Luna, and independent-review role contracts |
 | `config/` | Agent profiles and governance policy |
 | `.ctow/` | Durable governance evidence, never a duplicate runtime database |
 | `docs/adr/` | Architecture decisions |
@@ -224,7 +256,7 @@ CTOW v0.2.2 is a governance-hardened, Orca-native development template. Role con
 - [Workflow](docs/WORKFLOW.md)
 - [Orca integration](docs/ORCA-INTEGRATION.md)
 - [Task Contract](docs/TASK-CONTRACT.md)
+- [Command entry points](docs/COMMANDS.md)
 - [Issue escalation](docs/ISSUE-ESCALATION.md)
 - [Break-glass policy](docs/BREAK-GLASS.md)
 - [Changelog](CHANGELOG.md)
-

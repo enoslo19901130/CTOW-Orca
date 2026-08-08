@@ -58,6 +58,38 @@ python scripts/verify_skills.py
 
 `config/agents.yaml` 中的 model 名称代表策略意图。必须核对实际 Orca/Codex 报告的 model 与 reasoning effort，不得静默降级。
 
+## 命令入口
+
+所有场景都先按意图选择命令：
+
+```text
+查询或接手现有工作 → ctow status
+提出全新需求       → ctow-plan "<任务目标>"
+启动已批准工作     → ctow-start --plan <PLAN.yaml>
+```
+
+查询或接手时，必须先读取权威 Runtime 状态与本地治理进度：
+
+```bash
+ctow status
+# 等价形式：ctow-status
+```
+
+全新需求先创建 planning request：
+
+```bash
+ctow-plan "新增 API Key 管理"
+```
+
+该命令会保存 planning request 并生成可交给 Sol 的 Prompt。Sol 完成正式 Plan 且验证通过后，可以先预览，再创建权威的 Orca Run：
+
+```bash
+ctow-start --plan .ctow/plans/PLAN-API-KEYS.yaml --dry-run
+ctow-start --plan .ctow/plans/PLAN-API-KEYS.yaml
+```
+
+统一形式 `ctow plan`、`ctow start` 与上述命令等价。`ctow-start "<完全一致的目标>"` 只是从 `.ctow/plans/` 找到唯一有效 Plan 的快捷方式，不是跳过规划的许可。命令在交给 Terra 后停止，不创建第二套 scheduler 或 Worker Runtime。详见 [命令入口说明](docs/COMMANDS.md)。
+
 ## 如何启动项目
 
 正常入口是 User 向 Sol 提出需求。请提供目标、约束、权威文件、验收条件，以及不可变更的事项。Sol 先完成 discovery 与 planning；批准后的计划再由 Terra 转为 Orca Tasks 并调度 Luna。
@@ -203,7 +235,7 @@ ctow-guard validate-decision-progress examples/DECISION-PROGRESS-DEMO.yaml
 | 路径 | 用途 |
 |---|---|
 | `AGENTS.md` | Agent 进入 repository 时的入口规则 |
-| `.agents/skills/` | Sol、Terra、Luna 与独立 Reviewer 的角色契约 |
+| `.agents/skills/` | CTOW operator，以及 Sol、Terra、Luna 与独立 Reviewer 的角色契约 |
 | `config/` | Agent profile 与治理 policy |
 | `.ctow/` | 长期治理证据，不是 Runtime database |
 | `docs/adr/` | 架构决策 |
@@ -221,7 +253,7 @@ CTOW v0.2.2 是经过治理强化的 Orca-native 开发模板，已包含角色�
 - [Workflow](docs/WORKFLOW.md)
 - [Orca integration](docs/ORCA-INTEGRATION.md)
 - [Task Contract](docs/TASK-CONTRACT.md)
+- [命令入口](docs/COMMANDS.md)
 - [Issue escalation](docs/ISSUE-ESCALATION.md)
 - [Break-glass policy](docs/BREAK-GLASS.md)
 - [Changelog](CHANGELOG.md)
-

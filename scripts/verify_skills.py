@@ -5,6 +5,7 @@ EXPECTED = {
     "ctow-terra-commander",
     "ctow-luna-worker",
     "ctow-luna-independent-reviewer",
+    "ctow-operator",
 }
 root = Path(__file__).resolve().parents[1] / ".agents" / "skills"
 missing = [name for name in sorted(EXPECTED) if not (root / name / "SKILL.md").is_file()]

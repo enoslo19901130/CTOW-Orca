@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Add `ctow plan` / `ctow-plan` planning-intake commands with Sol-ready prompts.
+- Add `ctow start` / `ctow-start` to validate an approved Plan and create its authoritative Orca Run.
+- Add exact-goal Plan resolution and mutation-free `--dry-run` support.
+- Add `ctow status` / `ctow-status` for read-only Orca and governance status.
+- Add the installable `ctow-operator` skill so Codex can select the governed CLI action.
+- Document the command/runtime boundary in ADR-0004 and `docs/COMMANDS.md`.
+
 ## 0.2.2
 
 - Make Terra the canonical issue-fingerprint authority; Luna may only propose provisional identity for new issues.

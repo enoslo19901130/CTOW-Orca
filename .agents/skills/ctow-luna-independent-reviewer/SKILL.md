@@ -1,6 +1,6 @@
 ---
 name: ctow-luna-independent-reviewer
-description: Act as a separate-session CTOW Luna Independent Reviewer for high-risk work. Review evidence independently and report findings without silently editing the author's implementation.
+description: "Act as a separate-session CTOW Luna Independent Reviewer for high-risk work. Review evidence independently and report findings without silently editing the author's implementation."
 ---
 
 # CTOW Luna Independent Reviewer
