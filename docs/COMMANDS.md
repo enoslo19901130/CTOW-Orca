@@ -72,11 +72,36 @@ ctow start --plan .ctow/plans/PLAN-API-KEYS.yaml
 
 1. validates the CTOW repository config;
 2. validates the Plan schema and policy constraints;
-3. verifies that the Orca runtime is reachable;
-4. invokes `orca orchestration run-create --objective <plan.goal> --json`;
-5. returns the Orca receipt and tells Terra to create the Task DAG and supervised Dispatches.
+3. compiles the complete Terra Codex launch policy from `config/agents.yaml`;
+4. verifies that the Orca runtime is reachable;
+5. invokes `orca orchestration run-create --objective <plan.goal> --json`;
+6. accepts execution as started only when the Orca response includes a
+   machine-verifiable Terra bootstrap receipt for model, effort, Fast OFF,
+   sandbox, and approval policy from one explicit effective-policy subtree;
+7. returns the verified Orca receipt and tells Terra to create the Task DAG and
+   supervised Dispatches.
 
-It does not create a shadow Run/Task database, start Luna directly, or poll Worker terminals.
+It does not create a shadow Run/Task database, start Luna directly, or poll
+Worker terminals. If Run creation succeeds but Terra bootstrap is absent or
+mismatched, the command returns a typed fail-closed error with
+`execution_started: false`.
+
+The dry-run form is mutation-free and exposes the full Terra launch contract:
+
+```json
+{
+  "terra_launch": {
+    "argv": ["codex", "--model", "gpt-5.6-terra", "-c", "model_reasoning_effort=high", "--sandbox", "danger-full-access", "--ask-for-approval", "never"],
+    "requested_policy": {},
+    "expected_effective_policy": {"fast_mode": false},
+    "bootstrap": {"authority": "orca", "receipt_required": true,
+                   "verification_fields": ["model", "reasoning_effort", "fast_mode", "sandbox", "approval"]}
+  }
+}
+```
+
+`--dry-run` does not claim that a Terra process has started; it is the
+operator's policy/argv handoff artifact.
 
 ## Query status
 
@@ -108,7 +133,12 @@ It is a lookup convenience, not permission to start a new unplanned goal.
 
 ## Failure behavior
 
-Commands exit with code `2` for invalid input, config, Plan, missing Orca, or failed Orca operations. `run-create` output is accepted only when Orca exits successfully and returns JSON. An unknown or failed mutation result is surfaced rather than retried automatically.
+Commands exit with code `2` for invalid input, config, Plan, missing Orca, failed
+Orca operations, or failed runtime-policy verification. `run-create` output is
+accepted only when Orca exits successfully, returns a mapping, and includes a
+matching Terra bootstrap receipt with every required effective policy field in
+one explicit subtree. An unknown or failed mutation result is surfaced rather than retried
+automatically.
 
 ## Boundary
 

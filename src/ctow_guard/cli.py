@@ -18,6 +18,7 @@ from .models import (
     TaskContract,
     WorkerReport,
 )
+from .runtime import compile_codex_launch
 
 
 def validate_config(repo: Path) -> None:
@@ -26,16 +27,48 @@ def validate_config(repo: Path) -> None:
     for name, cfg in (("agents", agents), ("policy", policy)):
         if cfg.get("version") != __version__:
             raise ValueError(f"config/{name}.yaml version does not match package version")
-    profiles = agents["profiles"]
+    profiles = agents.get("profiles")
+    if not isinstance(profiles, dict):
+        raise ValueError("config/agents.yaml profiles must be a mapping")
     expected = {"sol": "max", "terra": "high", "luna": "max"}
+    expected_models = {
+        "sol": "gpt-5.6-sol",
+        "terra": "gpt-5.6-terra",
+        "luna": "gpt-5.6-luna",
+    }
     for role, effort in expected.items():
+        if role not in profiles or not isinstance(profiles[role], dict):
+            raise ValueError(f"missing {role} runtime profile")
         profile = profiles[role]
         if profile["reasoning_effort"] != effort:
             raise ValueError(f"{role} reasoning must be {effort}")
+        if profile["model"] != expected_models[role]:
+            raise ValueError(f"{role} model must be {expected_models[role]}")
         if profile["fast_mode"] is not False:
             raise ValueError(f"{role} fast_mode must be false")
         if profile.get("allow_reasoning_fallback") is not False:
             raise ValueError(f"{role} reasoning fallback must be disabled")
+        if profile.get("reasoning_strict") is not True:
+            raise ValueError(f"{role} reasoning must be strict")
+        # Compile each role during config validation.  This makes missing or
+        # malformed permission fields fail before an Orca Run is created.
+        compile_codex_launch(profile, role=role)
+
+    runtime_verification = agents.get("runtime_verification")
+    if not isinstance(runtime_verification, dict):
+        raise ValueError("config/agents.yaml runtime_verification must be a mapping")
+    required_receipts = {
+        "require_effective_model_receipt",
+        "require_effective_effort_receipt",
+        "require_effective_fast_mode_receipt",
+        "require_effective_sandbox_receipt",
+        "require_effective_approval_receipt",
+    }
+    for field in required_receipts:
+        if runtime_verification.get(field) is not True:
+            raise ValueError(f"runtime verification requires {field}=true")
+    if runtime_verification.get("fail_on_profile_downgrade") is not True:
+        raise ValueError("runtime verification must fail on profile downgrade")
     if policy["orchestration"]["source_of_truth"] != "orca":
         raise ValueError("Orca must remain the execution source of truth")
     d = policy["decision_efficiency"]

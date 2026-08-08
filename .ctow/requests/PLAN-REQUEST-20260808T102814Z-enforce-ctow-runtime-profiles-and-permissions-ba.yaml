@@ -1,0 +1,32 @@
+kind: ctow-plan-request
+version: 0.2.2
+status: planning_requested
+created_at: '2026-08-08T10:28:14Z'
+goal: Enforce CTOW runtime profiles and permissions based on agent feedback
+sol_prompt: 'Act as the CTOW Sol Architect for this repository.
+
+
+  Read AGENTS.md, the Sol skill, relevant ADRs and policy, existing .ctow/
+
+  governance evidence, and the repository state.
+
+
+  Goal: Enforce CTOW runtime profiles and permissions based on agent feedback
+
+
+  Begin with discovery and planning, not implementation. Define scope, constraints,
+
+  risks, acceptance criteria, Work Packages, dependencies, execution profile,
+
+  worker demand, and independent-review requirements. Ask the Human only when
+
+  missing information would materially change product intent, architecture
+
+  boundaries, or acceptance criteria.
+
+
+  Write the approved Plan under .ctow/plans/, validate it with ctow-guard, and hand
+
+  the validated Plan to Terra. Orca remains authoritative for execution lifecycle.
+
+  '

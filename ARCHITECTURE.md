@@ -19,7 +19,10 @@ Orca is authoritative for:
 
 CTOW must not mirror these into a second mutable runtime database.
 
-The `ctow-start` command is a thin boundary adapter: it validates an approved Plan and invokes Orca `run-create`. It returns the Orca receipt and does not retain mutable Run state.
+The `ctow-start` command is a thin boundary adapter: it validates an approved
+Plan, compiles the Terra profile, invokes Orca `run-create`, and accepts
+execution as started only after a machine-verifiable Terra bootstrap receipt.
+It returns structured policy evidence and does not retain mutable Run state.
 
 ## Governance source of truth
 
@@ -52,7 +55,11 @@ Full filesystem/shell access does not alter this authority graph.
 
 Sol creates the plan. Terra acts as execution coordinator and uses Orca supervised orchestration to start Luna workers. A Luna worker cannot create or reassign project workers under the normal policy.
 
-The runtime must enforce policy at the behavioral/validation layer even though the underlying CLI has broad permissions.
+The runtime must enforce policy at the behavioral/validation layer even though
+the underlying CLI has broad permissions. CTOW's pure profile compiler maps
+model, effort, Fast OFF, sandbox, and approval values to explicit Codex argv;
+Orca receipts must prove all effective values from one explicit effective-policy
+subtree.
 
 ## Review model
 
@@ -82,4 +89,4 @@ See ADR-0003.
 
 ## Command boundary
 
-`ctow-plan` records planning intake and generates a Sol-ready prompt; it does not generate or approve architecture. `ctow-start` requires a validated Plan before creating an Orca Run and stops at the Terra handoff. See ADR-0004.
+`ctow-plan` records planning intake and generates a Sol-ready prompt; it does not generate or approve architecture. `ctow-start` requires a validated Plan before creating an Orca Run and stops at the verified Terra handoff. See ADR-0004 and ADR-0005.

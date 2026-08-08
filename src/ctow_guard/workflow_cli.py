@@ -5,6 +5,7 @@ import json
 import shutil
 import subprocess
 import sys
+from collections.abc import Mapping
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -14,6 +15,7 @@ from . import __version__
 from .cli import validate_config
 from .io import load_yaml
 from .models import Plan
+from .runtime import RuntimePolicyError, compile_codex_launch, verify_bootstrap_receipt
 
 
 def _slug(value: str, limit: int = 48) -> str:
@@ -109,6 +111,39 @@ def resolve_plan(repo: Path, plan_path: str | None, goal: str | None) -> tuple[P
     return matches[0]
 
 
+def _runtime_verification(repo: Path) -> Mapping[str, object]:
+    agents = load_yaml(repo / "config" / "agents.yaml")
+    verification = agents.get("runtime_verification")
+    if not isinstance(verification, Mapping):
+        # validate_config normally catches this first; this guard keeps the
+        # helper fail-closed when called directly by an integration.
+        raise RuntimeError("config/agents.yaml runtime_verification must be a mapping")
+    return verification
+
+
+def _role_launch(repo: Path, role: str) -> dict[str, object]:
+    agents = load_yaml(repo / "config" / "agents.yaml")
+    profiles = agents.get("profiles")
+    if not isinstance(profiles, Mapping):
+        raise RuntimeError("config/agents.yaml profiles must be a mapping")
+    profile_role = "luna" if role == "reviewer" else role
+    profile = profiles.get(profile_role)
+    if not isinstance(profile, Mapping):
+        raise RuntimeError(f"missing runtime profile for {role}")
+    launch = compile_codex_launch(profile, role=role)
+    return {
+        "argv": list(launch.argv),
+        "requested_policy": dict(launch.requested_policy),
+        "expected_effective_policy": dict(launch.expected_effective_policy),
+        "bootstrap": {
+            "authority": "orca",
+            "receipt_required": True,
+            "verified": False,
+            "verification_fields": ["model", "reasoning_effort", "fast_mode", "sandbox", "approval"],
+        },
+    }
+
+
 def start_plan(
     plan_path: str | None,
     goal: str | None,
@@ -118,9 +153,24 @@ def start_plan(
     root = _repo_root(repo)
     validate_config(root)
     path, plan = resolve_plan(root, plan_path, goal)
+    terra_launch = _role_launch(root, "terra")
     command = ["orca", "orchestration", "run-create", "--objective", plan.goal, "--json"]
     if dry_run:
-        return {"ok": True, "dry_run": True, "plan": str(path), "plan_id": plan.plan_id, "command": command}
+        return {
+            "ok": True,
+            "dry_run": True,
+            "execution_started": False,
+            "plan": str(path),
+            "plan_id": plan.plan_id,
+            "command": command,
+            "terra_launch": terra_launch,
+            "runtime_verification": {
+                "required": True,
+                "authority": "orca",
+                "fields": ["model", "reasoning_effort", "fast_mode", "sandbox", "approval"],
+                "status": "pending_orca_bootstrap",
+            },
+        }
     if shutil.which("orca") is None:
         raise RuntimeError("Orca CLI is not available on PATH")
     status = subprocess.run(["orca", "status", "--json"], capture_output=True, text=True, check=False)
@@ -133,11 +183,35 @@ def start_plan(
         receipt = json.loads(result.stdout)
     except json.JSONDecodeError as exc:
         raise RuntimeError("Orca returned a non-JSON run-create receipt") from exc
+    try:
+        verified_bootstrap = verify_bootstrap_receipt(
+            terra_launch,
+            receipt,
+            role="terra",
+            runtime_verification=_runtime_verification(root),
+        )
+    except RuntimePolicyError as exc:
+        # A Run may already exist in Orca, but this command must not claim
+        # execution started until Terra bootstrap is verifiably effective.
+        exc.details.setdefault("run_created", True)
+        exc.details.setdefault("execution_started", False)
+        exc.details.setdefault("terra_launch", terra_launch)
+        exc.details.setdefault("orca", receipt)
+        raise
     return {
         "ok": True,
+        "execution_started": True,
         "plan": str(path),
         "plan_id": plan.plan_id,
         "orca": receipt,
+        "terra_launch": {
+            **terra_launch,
+            "bootstrap": {
+                **dict(terra_launch["bootstrap"]),
+                "verified": True,
+            },
+            "verification": verified_bootstrap,
+        },
         "next": "Terra creates the Task DAG and supervised Luna Dispatches in this Run.",
     }
 
@@ -211,6 +285,9 @@ def _run_start(args: argparse.Namespace) -> int:
     try:
         print(json.dumps(start_plan(args.plan, args.goal, args.repo, args.dry_run), ensure_ascii=False))
         return 0
+    except RuntimePolicyError as exc:
+        print(json.dumps({"ok": False, "execution_started": False, "error": exc.as_dict()}, ensure_ascii=False), file=sys.stderr)
+        return 2
     except Exception as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2

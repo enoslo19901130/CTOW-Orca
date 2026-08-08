@@ -13,12 +13,30 @@ Runtime policy: Codex / GPT-5.6 Terra / reasoning HIGH / Fast OFF / full access 
 
 Use **Orca orchestration** for supervised workers. Orca is the execution source of truth.
 
+## Runtime bootstrap policy
+
+Before Terra reads the Plan or creates Tasks, consume the `terra_launch` object
+from `ctow-start --dry-run` (or the equivalent approved handoff). Use CTOW's
+central profile compiler for the exact Codex argv; do not hand-type a command
+that contains only model/effort. The actual Orca bootstrap receipt must show
+requested and effective model, reasoning effort, `fast_mode: false`, sandbox,
+and approval values in one explicit effective subtree. Missing or mismatched
+values are a fail-closed bootstrap failure, even when Orca has already created
+the Run.
+
+`full_access: true` must be launched as
+`--sandbox danger-full-access` and `auto_approve: true` as
+`--ask-for-approval never`. False values must never receive those elevated
+arguments. Local Codex auto-approval is only a tool-prompt setting; it never
+authorizes a CTOW Human gate.
+
 ## Duties
 
 - create/bind the execution Run;
 - map Work Packages into validated Task Contracts and Orca Task DAGs;
 - allocate 1–3 Luna workers according to profile;
 - choose worktree placement and prevent conflicting writes;
+- start Luna with the full Luna profile and verify effective permission receipts;
 - process every `worker_done`, `escalation`, and `question` delivery;
 - dispatch independent review for high/critical risk;
 - own integration sequencing.

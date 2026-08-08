@@ -1,0 +1,43 @@
+plan_id: PLAN-CTOW-RUNTIME-PROFILE-ENFORCEMENT
+revision: 1
+goal: Enforce CTOW runtime profiles and permissions based on agent feedback
+execution_profile: MEDIUM
+constraints:
+  - Orca remains the authoritative execution runtime.
+  - CTOW must not introduce a custom PTY, process supervisor, or mutable Task database.
+  - Runtime launch must fail closed when required model, effort, sandbox, or approval policy cannot be expressed or verified.
+  - Local tool auto-approval must not bypass CTOW Human decision gates.
+  - Preserve the unrelated PLAN-LINEAGEM-CUSTOM-AUTH-ENDPOINTS.yaml artifact.
+work_packages:
+  - id: WP-001
+    objective: Implement a centralized CTOW profile-to-Codex launch compiler and structured requested/effective policy receipts for Terra, Luna, and Reviewer bootstrap.
+    risk: high
+    recommended_workers: 1
+    dependencies: []
+    acceptance:
+      - model, reasoning effort, sandbox, and approval fields compile to explicit Codex CLI arguments.
+      - full_access false and auto_approve false never receive elevated arguments.
+      - missing or mismatched required effective policy fails closed with a typed error.
+      - ctow-start dry-run exposes the complete Terra requested launch policy.
+      - Run creation is not reported as execution started when Terra bootstrap is unverified or fails.
+    independent_review_required: true
+  - id: WP-002
+    objective: Update Terra, Luna, Reviewer, Orca integration, command, configuration, and README contracts for permission-enforced custom terminal plus injected Dispatch fallback.
+    risk: medium
+    recommended_workers: 1
+    dependencies: [WP-001]
+    acceptance:
+      - Terra and Luna instructions use the centralized full profile and preserve formal Task and Dispatch provenance.
+      - runtime verification requires effective sandbox and approval receipts.
+      - Human gates remain independent from local Codex approval policy.
+    independent_review_required: false
+  - id: WP-003
+    objective: Independently review runtime-profile enforcement and execute regression validation.
+    risk: high
+    recommended_workers: 1
+    dependencies: [WP-001, WP-002]
+    acceptance:
+      - A separate Luna Reviewer verifies compiler mappings, fail-closed behavior, receipt semantics, and no custom runtime regression.
+      - Unit and schema/config tests pass.
+      - Any incomplete real-Orca effective-policy verification is explicitly documented rather than claimed.
+    independent_review_required: true

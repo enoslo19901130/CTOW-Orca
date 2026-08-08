@@ -1,5 +1,31 @@
 from __future__ import annotations
 
+# Runtime policy compilation lives in its own side-effect-free module so it
+# can be used by config validation, dry-run receipts, and Orca bootstrap
+# verification without importing the workflow CLI.  Re-export the public
+# helpers here for callers that historically import policy utilities from this
+# module.
+from .runtime import (
+    AUTO_APPROVAL,
+    DEFAULT_SAFE_APPROVAL,
+    DEFAULT_SAFE_SANDBOX,
+    FULL_ACCESS_SANDBOX,
+    BootstrapVerificationError,
+    CodexLaunch,
+    EffectivePolicyVerificationError,
+    MissingEffectivePolicyError,
+    PolicyMismatchError,
+    PolicyVerificationError,
+    ProfileCompilationError,
+    RuntimeBootstrapError,
+    RuntimePolicy,
+    RuntimePolicyError,
+    compile_codex_argv,
+    compile_codex_launch,
+    verify_bootstrap_receipt,
+    verify_effective_policy,
+)
+
 ALLOWED_DECISION_CHILD = {
     "human": "sol",
     "sol": "terra",

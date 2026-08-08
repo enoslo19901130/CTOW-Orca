@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- Add centralized profile-to-Codex compilation for Sol, Terra, Luna, and
+  independent-reviewer bootstrap, including explicit Fast OFF, sandbox, and
+  approval arguments.
+- Add structured requested/effective runtime-policy receipts and typed
+  fail-closed errors for missing or mismatched model, effort, Fast OFF,
+  sandbox, or approval policy; fields must come from one explicit effective
+  receipt subtree.
+- Extend `ctow-start --dry-run` with the complete Terra launch contract and
+  prevent actual start success from claiming execution before the actual Orca
+  receipt verifies Terra bootstrap; non-mapping receipts fail closed.
+- Document Orca custom-terminal plus injected-Dispatch fallback when
+  `worker-start` cannot express the full Luna permission policy, without adding
+  a CTOW process supervisor.
 - Add `ctow plan` / `ctow-plan` planning-intake commands with Sol-ready prompts.
 - Add `ctow start` / `ctow-start` to validate an approved Plan and create its authoritative Orca Run.
 - Add exact-goal Plan resolution and mutation-free `--dry-run` support.

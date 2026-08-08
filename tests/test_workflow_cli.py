@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -5,6 +6,7 @@ import yaml
 
 from ctow_guard import workflow_cli
 from ctow_guard.workflow_cli import collect_status, create_plan_request, resolve_plan, start_plan
+from ctow_guard.runtime import BootstrapVerificationError
 
 
 def _repo(tmp_path: Path) -> Path:
@@ -52,14 +54,104 @@ def test_start_dry_run_does_not_call_orca(tmp_path: Path):
     plan = Path(__file__).parents[1] / "examples" / "PLAN-DEMO.yaml"
     result = start_plan(str(plan), None, repo, dry_run=True)
     assert result["dry_run"] is True
+    assert result["execution_started"] is False
     assert result["plan_id"] == "PLAN-DEMO-001"
     assert result["command"][:3] == ["orca", "orchestration", "run-create"]
+    terra = result["terra_launch"]
+    assert terra["requested_policy"]["model"] == "gpt-5.6-terra"
+    assert terra["requested_policy"]["reasoning_effort"] == "high"
+    assert terra["requested_policy"]["full_access"] is True
+    assert terra["requested_policy"]["auto_approve"] is True
+    assert terra["bootstrap"]["verification_fields"] == [
+        "model",
+        "reasoning_effort",
+        "fast_mode",
+        "sandbox",
+        "approval",
+    ]
+    assert terra["expected_effective_policy"]["fast_mode"] is False
+    assert terra["expected_effective_policy"]["sandbox"] == "danger-full-access"
+    assert terra["expected_effective_policy"]["approval"] == "never"
 
 
 def test_start_goal_requires_approved_plan(tmp_path: Path):
     repo = _repo(tmp_path)
     with pytest.raises(ValueError, match="no validated Plan matches"):
         start_plan(None, "Unknown goal", repo, dry_run=True)
+
+
+def test_start_does_not_claim_execution_without_terra_bootstrap(tmp_path: Path, monkeypatch):
+    repo = _repo(tmp_path)
+    plan = Path(__file__).parents[1] / "examples" / "PLAN-DEMO.yaml"
+    monkeypatch.setattr(workflow_cli.shutil, "which", lambda _: "orca")
+
+    def fake_run(command, **kwargs):
+        if command[:2] == ["orca", "status"]:
+            return type("Result", (), {"returncode": 0, "stdout": "{}", "stderr": ""})()
+        return type(
+            "Result",
+            (),
+            {"returncode": 0, "stdout": json.dumps({"run_id": "run-1"}), "stderr": ""},
+        )()
+
+    monkeypatch.setattr(workflow_cli.subprocess, "run", fake_run)
+    with pytest.raises(BootstrapVerificationError) as raised:
+        start_plan(str(plan), None, repo)
+
+    assert raised.value.details["run_created"] is True
+    assert raised.value.details["execution_started"] is False
+
+
+def test_start_reports_verified_terra_bootstrap(tmp_path: Path, monkeypatch):
+    repo = _repo(tmp_path)
+    plan = Path(__file__).parents[1] / "examples" / "PLAN-DEMO.yaml"
+    monkeypatch.setattr(workflow_cli.shutil, "which", lambda _: "orca")
+
+    terra_policy = workflow_cli._role_launch(repo, "terra")["expected_effective_policy"]
+
+    def fake_run(command, **kwargs):
+        if command[:2] == ["orca", "status"]:
+            return type("Result", (), {"returncode": 0, "stdout": "{}", "stderr": ""})()
+        return type(
+            "Result",
+            (),
+            {
+                "returncode": 0,
+                "stdout": json.dumps(
+                    {"run_id": "run-1", "terra_bootstrap": {"effective_policy": terra_policy}}
+                ),
+                "stderr": "",
+            },
+        )()
+
+    monkeypatch.setattr(workflow_cli.subprocess, "run", fake_run)
+    result = start_plan(str(plan), None, repo)
+
+    assert result["ok"] is True
+    assert result["execution_started"] is True
+    assert result["terra_launch"]["bootstrap"]["verified"] is True
+
+
+def test_start_rejects_non_mapping_orca_receipt_fail_closed(tmp_path: Path, monkeypatch):
+    repo = _repo(tmp_path)
+    plan = Path(__file__).parents[1] / "examples" / "PLAN-DEMO.yaml"
+    monkeypatch.setattr(workflow_cli.shutil, "which", lambda _: "orca")
+
+    def fake_run(command, **kwargs):
+        if command[:2] == ["orca", "status"]:
+            return type("Result", (), {"returncode": 0, "stdout": "{}", "stderr": ""})()
+        return type(
+            "Result",
+            (),
+            {"returncode": 0, "stdout": json.dumps(["not", "a", "receipt"]), "stderr": ""},
+        )()
+
+    monkeypatch.setattr(workflow_cli.subprocess, "run", fake_run)
+    with pytest.raises(BootstrapVerificationError) as raised:
+        start_plan(str(plan), None, repo)
+
+    assert raised.value.details["run_created"] is True
+    assert raised.value.details["execution_started"] is False
 
 
 def test_collect_status_combines_orca_and_governance(tmp_path: Path, monkeypatch):

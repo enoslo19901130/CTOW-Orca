@@ -32,3 +32,12 @@ Treat Orca receipts as authoritative for Run, Task, Dispatch, Worker, terminal, 
 Do not start execution from a goal string that lacks an approved Plan. Do not launch Luna directly, invent Task state, or add a custom worker/process supervisor. After `ctow-start` creates a Run, Terra owns Task DAG creation and supervised Dispatch through the installed Orca orchestration contract.
 
 If the command is unavailable inside the repository, use `python -m ctow_guard.workflow_cli <subcommand>` as a diagnostic fallback and report that the package entry points need installation.
+
+`ctow-start --dry-run` is also the required Terra runtime-policy handoff: its
+`terra_launch` receipt contains the centrally compiled Codex argv plus
+requested/expected policy. A real start is not execution-started until Orca
+returns a verifiable effective model, effort, `fast_mode: false`, sandbox, and
+approval receipt from one explicit effective subtree returned by Orca. Missing
+or mismatched effective policy is a typed fail-closed error, even if Orca
+created a Run. Do not manually launch a second Codex process or treat
+`auto_approve` as permission to bypass CTOW Human gates.

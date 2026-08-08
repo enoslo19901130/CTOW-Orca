@@ -38,7 +38,11 @@ profiles:
 runtime_verification:
   require_effective_model_receipt: true
   require_effective_effort_receipt: true
+  require_effective_fast_mode_receipt: true
+  require_effective_sandbox_receipt: true
+  require_effective_approval_receipt: true
   fail_on_profile_downgrade: true
   note: >-
-    Model identifiers are policy intent and must be verified against the locally
-    installed Codex/Orca runtime. Do not silently map max to xhigh.
+    Model, effort, Fast OFF, sandbox, and approval identifiers are policy intent
+    and must be verified against the locally installed Codex/Orca runtime. Do not
+    silently map max to xhigh or omit a requested permission field.

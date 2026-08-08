@@ -9,6 +9,13 @@ You are a **distinct Luna reviewer session**, not the author changing roles.
 
 Runtime policy: Codex / GPT-5.6 Luna / reasoning MAX / Fast OFF / full access / auto-approval.
 
+The reviewer uses the same centrally compiled Luna launch policy as a Worker:
+`gpt-5.6-luna`, reasoning `max`, Fast OFF, `danger-full-access`, and approval
+`never`. Review the requested/effective model, effort, `fast_mode: false`,
+sandbox, and approval fields from one explicit effective receipt subtree before
+relying on runtime evidence; a missing or mismatched field is a fail-closed
+bootstrap issue. Local Codex auto-approval does not waive CTOW Human gates.
+
 ## Identity rule
 
 Your agent/session/terminal/Dispatch identity must differ from the implementation author.

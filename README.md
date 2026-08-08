@@ -24,6 +24,9 @@ USER → SOL → TERRA → LUNA → RESULT
 - **Luna Reviewer** independently reviews high-risk work in a different session and Dispatch.
 - **Orca** owns worktrees, terminals, workers, Tasks, Dispatches, and execution state.
 - **CTOW** owns governance rules and evidence; it does not replace Orca's runtime.
+- **Runtime profiles** are compiled centrally into Codex launch arguments and
+  must be proven by requested/effective Orca receipts before bootstrap is
+  reported as started.
 
 Decisions flow downward; uncertainty and conflicts flow upward:
 
@@ -60,6 +63,14 @@ python scripts/verify_skills.py
 
 The model names in `config/agents.yaml` express policy intent. Verify the effective model and reasoning effort reported by the installed Orca/Codex runtime; CTOW must not silently downgrade them.
 
+Runtime verification also requires Fast OFF (`fast_mode: false`) and covers the
+concrete sandbox and approval policy.
+`full_access: true` compiles to `--sandbox danger-full-access` and
+`auto_approve: true` compiles to `--ask-for-approval never`; false values compile
+to non-elevated policies and are never promoted. A launch receipt must expose
+the requested and effective model, effort, Fast OFF, sandbox, and approval
+values from one explicit effective-policy subtree returned by Orca.
+
 ## Command entry points
 
 Always select the command by intent:
@@ -90,7 +101,12 @@ ctow-start --plan .ctow/plans/PLAN-API-KEYS.yaml --dry-run
 ctow-start --plan .ctow/plans/PLAN-API-KEYS.yaml
 ```
 
-The unified forms `ctow plan` and `ctow start` are equivalent. `ctow-start "<exact goal>"` can resolve one matching validated Plan under `.ctow/plans/`; it is only a lookup convenience and never skips planning. These commands stop at the Terra handoff and do not implement a second scheduler or Worker runtime. See [Command Entry Points](docs/COMMANDS.md).
+`ctow-start --dry-run` includes the complete Terra `terra_launch` policy and
+argv. An actual start is considered execution-started only after Orca returns a
+machine-verifiable Terra bootstrap receipt; a missing or mismatched receipt is
+a typed fail-closed error even if Orca already created the Run.
+
+The unified forms `ctow plan` and `ctow start` are equivalent. `ctow-start "<exact goal>"` can resolve one matching validated Plan under `.ctow/plans/`; it is only a lookup convenience and never skips planning. These commands stop at the verified Terra handoff and do not implement a second scheduler or Worker runtime. See [Command Entry Points](docs/COMMANDS.md).
 
 ## Start a project
 
@@ -255,6 +271,7 @@ CTOW v0.2.2 is a governance-hardened, Orca-native development template. Role con
 - [Architecture](ARCHITECTURE.md)
 - [Workflow](docs/WORKFLOW.md)
 - [Orca integration](docs/ORCA-INTEGRATION.md)
+- [Runtime profile enforcement](docs/adr/ADR-0005-RUNTIME-PROFILE-ENFORCEMENT.md)
 - [Task Contract](docs/TASK-CONTRACT.md)
 - [Command entry points](docs/COMMANDS.md)
 - [Issue escalation](docs/ISSUE-ESCALATION.md)
