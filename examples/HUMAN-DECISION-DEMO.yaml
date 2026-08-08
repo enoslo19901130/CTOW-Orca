@@ -1,0 +1,10 @@
+decision_id: HD-001
+requested_by: sol
+question: Preserve backward compatibility with the legacy protocol?
+options:
+  - preserve
+  - drop
+recommendation: preserve
+blocking: true
+decision: null
+status: pending

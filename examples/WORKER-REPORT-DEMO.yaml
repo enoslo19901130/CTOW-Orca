@@ -1,0 +1,13 @@
+task_id: TASK-WP001-A
+dispatch_id: dispatch-demo-001
+agent_id: luna-a
+session_id: session-luna-a-001
+outcome: succeeded
+summary: Completed bounded authentication flow analysis.
+evidence:
+  - reports/auth-flow.md
+files_modified: []
+tests:
+  - static analysis completed
+remaining_risks:
+  - reconnect path requires execution-task verification

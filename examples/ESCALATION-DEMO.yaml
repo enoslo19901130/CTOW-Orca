@@ -1,0 +1,30 @@
+escalation_id: ESC-WP002-001
+issue_fingerprint: auth-contract-authstate
+fingerprint_status: canonical
+canonicalized_by: terra
+cycle_count: 1
+from_role: terra
+to_role: sol
+severity: high
+blocking: true
+summary: The immutable AuthState plan constraint conflicts with the observed SessionManager mutation contract.
+evidence:
+  - src/auth/AuthState.java
+  - src/session/SessionManager.java
+attempted_actions:
+  - evaluated an immutable wrapper
+  - evaluated local adaptation without API changes
+failed_hypotheses:
+  - local adaptation preserves reconnect behavior without shared mutation
+material_evidence_delta:
+  - kind: invalidated_hypothesis
+    summary: Reconnect regression disproved the local-adapter hypothesis.
+    evidence:
+      - tests/reconnect-regression.log
+    decision_impact: Removes the local-adapter option from the feasible decision space.
+decision_required: Choose whether to relax immutability or revise SessionManager ownership.
+decision_question_key: revise-sessionmanager-ownership
+options:
+  - relax AuthState immutability within SessionManager boundary
+  - revise SessionManager architecture before continuing
+recommended_option: revise SessionManager architecture before continuing

@@ -1,0 +1,8 @@
+canonical_fingerprint: auth-contract-authstate
+domain: auth
+conflict_class: contract
+stable_subject: authstate
+created_by: terra
+aliases:
+  - auth-immutability-authstate
+status: active

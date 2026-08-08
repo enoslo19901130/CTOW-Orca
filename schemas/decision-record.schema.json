@@ -1,0 +1,204 @@
+{
+  "$defs": {
+    "EvidenceDelta": {
+      "properties": {
+        "kind": {
+          "enum": [
+            "changed_observable",
+            "new_failure_mode",
+            "invalidated_hypothesis",
+            "changed_decision_space",
+            "acceptance_failure",
+            "targeted_validation_result",
+            "new_constraint",
+            "new_reproduction_condition"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "decision_impact": {
+          "title": "Decision Impact",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "summary",
+        "evidence",
+        "decision_impact"
+      ],
+      "title": "EvidenceDelta",
+      "type": "object"
+    },
+    "TargetedValidation": {
+      "properties": {
+        "hypothesis": {
+          "title": "Hypothesis",
+          "type": "string"
+        },
+        "method": {
+          "title": "Method",
+          "type": "string"
+        },
+        "success_criterion": {
+          "title": "Success Criterion",
+          "type": "string"
+        },
+        "failure_criterion": {
+          "title": "Failure Criterion",
+          "type": "string"
+        },
+        "expected_decision_impact": {
+          "title": "Expected Decision Impact",
+          "type": "string"
+        },
+        "max_attempts": {
+          "default": 1,
+          "maximum": 1,
+          "minimum": 1,
+          "title": "Max Attempts",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "hypothesis",
+        "method",
+        "success_criterion",
+        "failure_criterion",
+        "expected_decision_impact"
+      ],
+      "title": "TargetedValidation",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "decision_id": {
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "issue_fingerprint": {
+      "title": "Issue Fingerprint",
+      "type": "string"
+    },
+    "source_escalation_id": {
+      "title": "Source Escalation Id",
+      "type": "string"
+    },
+    "cycle_count": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Cycle Count",
+      "type": "integer"
+    },
+    "previous_decision_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Decision Id"
+    },
+    "actor": {
+      "enum": [
+        "sol",
+        "human"
+      ],
+      "title": "Actor",
+      "type": "string"
+    },
+    "action": {
+      "enum": [
+        "DECIDE",
+        "REQUEST_TARGETED_EVIDENCE",
+        "REVISE_PLAN",
+        "ESCALATE_HUMAN"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "decision": {
+      "title": "Decision",
+      "type": "string"
+    },
+    "decision_question": {
+      "title": "Decision Question",
+      "type": "string"
+    },
+    "decision_question_key": {
+      "title": "Decision Question Key",
+      "type": "string"
+    },
+    "rationale": {
+      "title": "Rationale",
+      "type": "string"
+    },
+    "evidence_basis": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Evidence Basis",
+      "type": "array"
+    },
+    "new_information": {
+      "items": {
+        "$ref": "#/$defs/EvidenceDelta"
+      },
+      "title": "New Information",
+      "type": "array"
+    },
+    "unchanged_information": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unchanged Information",
+      "type": "array"
+    },
+    "targeted_validation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TargetedValidation"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "material_evidence_delta_required_to_reopen": {
+      "default": true,
+      "title": "Material Evidence Delta Required To Reopen",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "decision_id",
+    "issue_fingerprint",
+    "source_escalation_id",
+    "actor",
+    "action",
+    "decision",
+    "decision_question",
+    "decision_question_key",
+    "rationale",
+    "evidence_basis"
+  ],
+  "title": "DecisionRecord",
+  "type": "object"
+}

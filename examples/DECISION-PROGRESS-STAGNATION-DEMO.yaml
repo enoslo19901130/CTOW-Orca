@@ -1,0 +1,19 @@
+progress_id: PROG-AUTH-003
+issue_fingerprint: auth-contract-authstate
+cycle_count: 2
+current_escalation_id: ESC-WP002-003
+previous_escalation_id: ESC-WP002-002
+previous_decision_id: DEC-AUTH-002
+decision_question: Should the plan revise SessionManager ownership?
+decision_question_key: revise-sessionmanager-ownership
+previous_decision_question: Should the plan revise SessionManager ownership?
+previous_decision_question_key: revise-sessionmanager-ownership
+unchanged_facts:
+  - Public API must remain compatible.
+  - SessionManager currently mutates AuthState.
+material_evidence_delta: []
+stagnation_detected: true
+allowed_next_actions:
+  - DECIDE
+  - REVISE_PLAN
+  - ESCALATE_HUMAN

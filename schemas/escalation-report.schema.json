@@ -1,0 +1,252 @@
+{
+  "$defs": {
+    "EvidenceDelta": {
+      "properties": {
+        "kind": {
+          "enum": [
+            "changed_observable",
+            "new_failure_mode",
+            "invalidated_hypothesis",
+            "changed_decision_space",
+            "acceptance_failure",
+            "targeted_validation_result",
+            "new_constraint",
+            "new_reproduction_condition"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "decision_impact": {
+          "title": "Decision Impact",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "summary",
+        "evidence",
+        "decision_impact"
+      ],
+      "title": "EvidenceDelta",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "escalation_id": {
+      "title": "Escalation Id",
+      "type": "string"
+    },
+    "issue_fingerprint": {
+      "title": "Issue Fingerprint",
+      "type": "string"
+    },
+    "fingerprint_status": {
+      "default": "provisional",
+      "enum": [
+        "provisional",
+        "canonical"
+      ],
+      "title": "Fingerprint Status",
+      "type": "string"
+    },
+    "canonicalized_by": {
+      "anyOf": [
+        {
+          "const": "terra",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Canonicalized By"
+    },
+    "previous_fingerprint": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Fingerprint"
+    },
+    "identity_change_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Identity Change Reason"
+    },
+    "material_identity_difference": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Material Identity Difference"
+    },
+    "cycle_count": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Cycle Count",
+      "type": "integer"
+    },
+    "from_role": {
+      "enum": [
+        "luna",
+        "terra",
+        "sol"
+      ],
+      "title": "From Role",
+      "type": "string"
+    },
+    "to_role": {
+      "enum": [
+        "terra",
+        "sol",
+        "human"
+      ],
+      "title": "To Role",
+      "type": "string"
+    },
+    "severity": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "blocking": {
+      "title": "Blocking",
+      "type": "boolean"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "evidence": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Evidence",
+      "type": "array"
+    },
+    "attempted_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Attempted Actions",
+      "type": "array"
+    },
+    "failed_hypotheses": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Failed Hypotheses",
+      "type": "array"
+    },
+    "previous_decision_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Decision Id"
+    },
+    "previous_escalation_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Escalation Id"
+    },
+    "material_evidence_delta": {
+      "items": {
+        "$ref": "#/$defs/EvidenceDelta"
+      },
+      "title": "Material Evidence Delta",
+      "type": "array"
+    },
+    "decision_required": {
+      "title": "Decision Required",
+      "type": "string"
+    },
+    "decision_question_key": {
+      "title": "Decision Question Key",
+      "type": "string"
+    },
+    "options": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Options",
+      "type": "array"
+    },
+    "recommended_option": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Recommended Option"
+    }
+  },
+  "required": [
+    "escalation_id",
+    "issue_fingerprint",
+    "from_role",
+    "to_role",
+    "severity",
+    "blocking",
+    "summary",
+    "evidence",
+    "decision_required",
+    "decision_question_key",
+    "options"
+  ],
+  "title": "EscalationReport",
+  "type": "object"
+}

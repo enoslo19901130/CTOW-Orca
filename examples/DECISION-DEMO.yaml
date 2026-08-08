@@ -1,0 +1,29 @@
+decision_id: DEC-AUTH-001
+issue_fingerprint: auth-contract-authstate
+source_escalation_id: ESC-WP002-001
+cycle_count: 1
+actor: sol
+action: REQUEST_TARGETED_EVIDENCE
+decision: Run one bounded compatibility experiment before revising the plan.
+decision_question: Can a narrow ownership adapter preserve reconnect behavior without violating the public API constraint?
+decision_question_key: preserve-reconnect-without-api-change
+rationale: Existing evidence proves the mutation conflict, but one bounded compatibility path remains decision-relevant.
+evidence_basis:
+  - ESC-WP002-001
+new_information:
+  - kind: invalidated_hypothesis
+    summary: The previous local adapter failed reconnect regression.
+    evidence:
+      - tests/reconnect-regression.log
+    decision_impact: Requires testing a narrower ownership adapter or revising the plan.
+unchanged_information:
+  - Public API must remain compatible.
+  - SessionManager currently mutates AuthState.
+targeted_validation:
+  hypothesis: A narrow ownership adapter can preserve reconnect behavior without a public API change.
+  method: Implement the minimum adapter in a disposable worktree and run only reconnect regression tests.
+  success_criterion: All reconnect regression tests pass without public API changes.
+  failure_criterion: Any reconnect regression fails or the adapter requires a public API change.
+  expected_decision_impact: Success preserves the current plan; failure requires plan revision.
+  max_attempts: 1
+material_evidence_delta_required_to_reopen: true

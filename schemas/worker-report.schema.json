@@ -1,0 +1,71 @@
+{
+  "properties": {
+    "task_id": {
+      "title": "Task Id",
+      "type": "string"
+    },
+    "dispatch_id": {
+      "title": "Dispatch Id",
+      "type": "string"
+    },
+    "agent_id": {
+      "title": "Agent Id",
+      "type": "string"
+    },
+    "session_id": {
+      "title": "Session Id",
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "succeeded",
+        "failed",
+        "blocked"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "evidence": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "files_modified": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Files Modified",
+      "type": "array"
+    },
+    "tests": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tests",
+      "type": "array"
+    },
+    "remaining_risks": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Remaining Risks",
+      "type": "array"
+    }
+  },
+  "required": [
+    "task_id",
+    "dispatch_id",
+    "agent_id",
+    "session_id",
+    "outcome",
+    "summary"
+  ],
+  "title": "WorkerReport",
+  "type": "object"
+}

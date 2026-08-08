@@ -1,0 +1,86 @@
+{
+  "properties": {
+    "canonical_fingerprint": {
+      "title": "Canonical Fingerprint",
+      "type": "string"
+    },
+    "domain": {
+      "title": "Domain",
+      "type": "string"
+    },
+    "conflict_class": {
+      "title": "Conflict Class",
+      "type": "string"
+    },
+    "stable_subject": {
+      "title": "Stable Subject",
+      "type": "string"
+    },
+    "created_by": {
+      "const": "terra",
+      "default": "terra",
+      "title": "Created By",
+      "type": "string"
+    },
+    "aliases": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Aliases",
+      "type": "array"
+    },
+    "prior_fingerprint": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Prior Fingerprint"
+    },
+    "identity_change_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Identity Change Reason"
+    },
+    "material_identity_difference": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Material Identity Difference"
+    },
+    "status": {
+      "default": "active",
+      "enum": [
+        "active",
+        "superseded"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "canonical_fingerprint",
+    "domain",
+    "conflict_class",
+    "stable_subject"
+  ],
+  "title": "IssueIdentityRecord",
+  "type": "object"
+}

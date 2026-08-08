@@ -1,0 +1,34 @@
+plan_id: PLAN-DEMO-001
+revision: 1
+goal: Refactor authentication state handling without changing public protocol behavior.
+execution_profile: FULL
+constraints:
+  - Public API must remain compatible.
+  - Protocol behavior must not change.
+work_packages:
+  - id: WP-001
+    objective: Analyze the current authentication flow and mutation points.
+    risk: medium
+    recommended_workers: 1
+    dependencies: []
+    acceptance:
+      - All state mutation entry points are documented.
+    independent_review_required: false
+  - id: WP-002
+    objective: Refactor authentication state handling according to WP-001 evidence.
+    risk: high
+    recommended_workers: 2
+    dependencies: [WP-001]
+    acceptance:
+      - Build succeeds.
+      - Existing authentication regression tests pass.
+      - No public API change.
+    independent_review_required: true
+  - id: WP-003
+    objective: Expand reconnect and malformed-state regression coverage.
+    risk: medium
+    recommended_workers: 1
+    dependencies: [WP-002]
+    acceptance:
+      - New regression tests pass.
+    independent_review_required: false

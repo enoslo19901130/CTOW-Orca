@@ -1,0 +1,90 @@
+version: 0.2.2
+
+hierarchy:
+  decision_flow: [human, sol, terra, luna]
+  escalation_flow: [luna, terra, sol, human]
+  luna_may_spawn_workers: false
+
+execution_profiles:
+  SMALL:
+    max_luna_workers: 1
+  MEDIUM:
+    max_luna_workers: 2
+  FULL:
+    max_luna_workers: 3
+  SWARM:
+    max_luna_workers: 3
+    independent_investigation_required: true
+    cross_worker_reasoning_before_synthesis: false
+
+review:
+  high_risk_requires_independent_review: true
+  author_agent_must_differ_from_reviewer: true
+  author_session_must_differ_from_reviewer: true
+  author_dispatch_must_differ_from_reviewer: true
+
+orchestration:
+  source_of_truth: orca
+  supervised_workers_use_orca_orchestration: true
+  arbitrary_terminal_polling_for_completion: false
+  timeout_means_failure: false
+  require_worker_done_or_terminal_failure_for_completion: true
+
+break_glass:
+  enabled: true
+  default_allowed: false
+  allowed_reasons:
+    - critical_production_fix
+    - security_containment
+    - worker_fleet_unavailable
+    - blocking_integration_repair
+  audit_required: true
+  post_review_required: true
+
+human_gate:
+  required_for:
+    - ambiguous_product_intent
+    - destructive_production_change
+    - architecture_choice_requiring_owner_preference
+
+decision_efficiency:
+  issue_fingerprint_required: true
+  decision_record_required_for_sol: true
+  decision_progress_ledger_required: true
+  require_material_evidence_delta_to_reopen: true
+  same_issue_sol_revalidation_limit: 1
+  same_hypothesis_retry_limit_per_level: 1
+  stagnation_threshold_cycles: 2
+  no_full_repo_revalidation_by_default: true
+  prefer_compressed_decision_brief: true
+  fingerprint:
+    canonical_owner: terra
+    provisional_allowed_from_luna: true
+    semantic_format: "{domain}-{conflict_class}-{stable_subject}"
+    minimum_segments: 3
+    rename_requires_material_identity_change: true
+    wording_change_is_not_new_identity: true
+    another_worker_confirmation_is_not_new_identity: true
+  material_evidence:
+    accepted_kinds:
+      - changed_observable
+      - new_failure_mode
+      - invalidated_hypothesis
+      - changed_decision_space
+      - acceptance_failure
+      - targeted_validation_result
+      - new_constraint
+      - new_reproduction_condition
+    not_material:
+      - same_test_rerun_same_result
+      - another_worker_agrees
+      - another_file_confirms_same_fact
+      - reworded_same_observation
+      - full_repo_rescan_without_changed_conclusion
+  targeted_validation:
+    enabled: true
+    max_attempts_per_request: 1
+    require_hypothesis: true
+    require_success_criterion: true
+    require_failure_criterion: true
+    require_expected_decision_impact: true

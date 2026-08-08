@@ -1,0 +1,110 @@
+{
+  "$defs": {
+    "WorkPackage": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "objective": {
+          "title": "Objective",
+          "type": "string"
+        },
+        "risk": {
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
+          "title": "Risk",
+          "type": "string"
+        },
+        "recommended_workers": {
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Recommended Workers",
+          "type": "integer"
+        },
+        "dependencies": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dependencies",
+          "type": "array"
+        },
+        "acceptance": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Acceptance",
+          "type": "array"
+        },
+        "independent_review_required": {
+          "default": false,
+          "title": "Independent Review Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "objective",
+        "risk",
+        "recommended_workers",
+        "acceptance"
+      ],
+      "title": "WorkPackage",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "plan_id": {
+      "title": "Plan Id",
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "goal": {
+      "title": "Goal",
+      "type": "string"
+    },
+    "execution_profile": {
+      "enum": [
+        "SMALL",
+        "MEDIUM",
+        "FULL",
+        "SWARM"
+      ],
+      "title": "Execution Profile",
+      "type": "string"
+    },
+    "constraints": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Constraints",
+      "type": "array"
+    },
+    "work_packages": {
+      "items": {
+        "$ref": "#/$defs/WorkPackage"
+      },
+      "minItems": 1,
+      "title": "Work Packages",
+      "type": "array"
+    }
+  },
+  "required": [
+    "plan_id",
+    "revision",
+    "goal",
+    "execution_profile",
+    "work_packages"
+  ],
+  "title": "Plan",
+  "type": "object"
+}

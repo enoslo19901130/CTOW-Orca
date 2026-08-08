@@ -1,0 +1,112 @@
+{
+  "$defs": {
+    "Finding": {
+      "properties": {
+        "severity": {
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "recommendation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recommendation"
+        }
+      },
+      "required": [
+        "severity",
+        "summary",
+        "evidence"
+      ],
+      "title": "Finding",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "review_id": {
+      "title": "Review Id",
+      "type": "string"
+    },
+    "task_id": {
+      "title": "Task Id",
+      "type": "string"
+    },
+    "author_agent": {
+      "title": "Author Agent",
+      "type": "string"
+    },
+    "reviewer_agent": {
+      "title": "Reviewer Agent",
+      "type": "string"
+    },
+    "author_session": {
+      "title": "Author Session",
+      "type": "string"
+    },
+    "reviewer_session": {
+      "title": "Reviewer Session",
+      "type": "string"
+    },
+    "author_dispatch": {
+      "title": "Author Dispatch",
+      "type": "string"
+    },
+    "reviewer_dispatch": {
+      "title": "Reviewer Dispatch",
+      "type": "string"
+    },
+    "verdict": {
+      "enum": [
+        "PASS",
+        "CONDITIONAL_PASS",
+        "FAIL"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    },
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Findings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "review_id",
+    "task_id",
+    "author_agent",
+    "reviewer_agent",
+    "author_session",
+    "reviewer_session",
+    "author_dispatch",
+    "reviewer_dispatch",
+    "verdict"
+  ],
+  "title": "ReviewReport",
+  "type": "object"
+}

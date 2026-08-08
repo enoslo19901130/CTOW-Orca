@@ -1,0 +1,165 @@
+{
+  "$defs": {
+    "EvidenceDelta": {
+      "properties": {
+        "kind": {
+          "enum": [
+            "changed_observable",
+            "new_failure_mode",
+            "invalidated_hypothesis",
+            "changed_decision_space",
+            "acceptance_failure",
+            "targeted_validation_result",
+            "new_constraint",
+            "new_reproduction_condition"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "decision_impact": {
+          "title": "Decision Impact",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "summary",
+        "evidence",
+        "decision_impact"
+      ],
+      "title": "EvidenceDelta",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "progress_id": {
+      "title": "Progress Id",
+      "type": "string"
+    },
+    "issue_fingerprint": {
+      "title": "Issue Fingerprint",
+      "type": "string"
+    },
+    "cycle_count": {
+      "minimum": 1,
+      "title": "Cycle Count",
+      "type": "integer"
+    },
+    "current_escalation_id": {
+      "title": "Current Escalation Id",
+      "type": "string"
+    },
+    "previous_escalation_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Escalation Id"
+    },
+    "previous_decision_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Decision Id"
+    },
+    "decision_question": {
+      "title": "Decision Question",
+      "type": "string"
+    },
+    "decision_question_key": {
+      "title": "Decision Question Key",
+      "type": "string"
+    },
+    "previous_decision_question": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Decision Question"
+    },
+    "previous_decision_question_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Decision Question Key"
+    },
+    "unchanged_facts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unchanged Facts",
+      "type": "array"
+    },
+    "material_evidence_delta": {
+      "items": {
+        "$ref": "#/$defs/EvidenceDelta"
+      },
+      "title": "Material Evidence Delta",
+      "type": "array"
+    },
+    "stagnation_detected": {
+      "default": false,
+      "title": "Stagnation Detected",
+      "type": "boolean"
+    },
+    "allowed_next_actions": {
+      "items": {
+        "enum": [
+          "DECIDE",
+          "REQUEST_TARGETED_EVIDENCE",
+          "REVISE_PLAN",
+          "ESCALATE_HUMAN"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Allowed Next Actions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "progress_id",
+    "issue_fingerprint",
+    "cycle_count",
+    "current_escalation_id",
+    "decision_question",
+    "decision_question_key",
+    "allowed_next_actions"
+  ],
+  "title": "DecisionProgressRecord",
+  "type": "object"
+}

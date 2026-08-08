@@ -1,0 +1,44 @@
+version: 0.2.2
+runtime: orca
+
+profiles:
+  sol:
+    role: architect
+    agent: codex
+    model: gpt-5.6-sol
+    reasoning_effort: max
+    reasoning_strict: true
+    allow_reasoning_fallback: false
+    fast_mode: false
+    full_access: true
+    auto_approve: true
+
+  terra:
+    role: commander
+    agent: codex
+    model: gpt-5.6-terra
+    reasoning_effort: high
+    reasoning_strict: true
+    allow_reasoning_fallback: false
+    fast_mode: false
+    full_access: true
+    auto_approve: true
+
+  luna:
+    role: worker
+    agent: codex
+    model: gpt-5.6-luna
+    reasoning_effort: max
+    reasoning_strict: true
+    allow_reasoning_fallback: false
+    fast_mode: false
+    full_access: true
+    auto_approve: true
+
+runtime_verification:
+  require_effective_model_receipt: true
+  require_effective_effort_receipt: true
+  fail_on_profile_downgrade: true
+  note: >-
+    Model identifiers are policy intent and must be verified against the locally
+    installed Codex/Orca runtime. Do not silently map max to xhigh.

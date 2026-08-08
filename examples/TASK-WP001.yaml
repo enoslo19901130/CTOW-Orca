@@ -1,0 +1,15 @@
+task_id: TASK-WP001-A
+work_package_id: WP-001
+task_type: execution
+objective: Analyze the authentication flow and identify decision-sensitive state transitions.
+risk: medium
+mode: research
+scope:
+  - src/auth/**
+dependencies: []
+acceptance:
+  - call flow and state mutation points are documented
+  - evidence references are included
+evidence_required:
+  - file paths and relevant symbols
+independent_review_required: false

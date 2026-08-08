@@ -1,0 +1,20 @@
+task_id: REVIEW-WP002-A
+work_package_id: WP-002
+task_type: review
+objective: Independently review the completed WP-002 execution result against its contract and acceptance criteria.
+risk: high
+mode: review
+scope:
+  - src/auth/**
+  - tests/auth/**
+dependencies:
+  - TASK-WP002-A
+acceptance:
+  - diff matches approved scope
+  - acceptance tests are sufficient
+  - no unreported architectural deviation exists
+evidence_required:
+  - execution task diff
+  - test results
+independent_review_required: false
+review_of_task_id: TASK-WP002-A

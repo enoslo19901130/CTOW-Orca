@@ -1,0 +1,124 @@
+{
+  "properties": {
+    "task_id": {
+      "title": "Task Id",
+      "type": "string"
+    },
+    "work_package_id": {
+      "title": "Work Package Id",
+      "type": "string"
+    },
+    "task_type": {
+      "default": "execution",
+      "enum": [
+        "execution",
+        "review",
+        "targeted_validation",
+        "swarm_investigation"
+      ],
+      "title": "Task Type",
+      "type": "string"
+    },
+    "objective": {
+      "title": "Objective",
+      "type": "string"
+    },
+    "risk": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "Risk",
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "research",
+        "implement",
+        "test",
+        "review"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "scope": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Scope",
+      "type": "array"
+    },
+    "write_scope": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Write Scope",
+      "type": "array"
+    },
+    "dependencies": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Dependencies",
+      "type": "array"
+    },
+    "acceptance": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Acceptance",
+      "type": "array"
+    },
+    "evidence_required": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Required",
+      "type": "array"
+    },
+    "independent_review_required": {
+      "default": false,
+      "title": "Independent Review Required",
+      "type": "boolean"
+    },
+    "review_of_task_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Review Of Task Id"
+    },
+    "parent_task_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parent Task Id"
+    }
+  },
+  "required": [
+    "task_id",
+    "work_package_id",
+    "objective",
+    "risk",
+    "mode",
+    "scope",
+    "acceptance"
+  ],
+  "title": "TaskContract",
+  "type": "object"
+}

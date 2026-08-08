@@ -1,0 +1,68 @@
+{
+  "properties": {
+    "audit_id": {
+      "title": "Audit Id",
+      "type": "string"
+    },
+    "actor": {
+      "enum": [
+        "sol",
+        "terra"
+      ],
+      "title": "Actor",
+      "type": "string"
+    },
+    "reason": {
+      "enum": [
+        "critical_production_fix",
+        "security_containment",
+        "worker_fleet_unavailable",
+        "blocking_integration_repair"
+      ],
+      "title": "Reason",
+      "type": "string"
+    },
+    "scope": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Scope",
+      "type": "array"
+    },
+    "files_modified": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Files Modified",
+      "type": "array"
+    },
+    "normal_authority_bypassed": {
+      "title": "Normal Authority Bypassed",
+      "type": "string"
+    },
+    "validation_performed": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Validation Performed",
+      "type": "array"
+    },
+    "post_review_required": {
+      "default": true,
+      "title": "Post Review Required",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "audit_id",
+    "actor",
+    "reason",
+    "scope",
+    "normal_authority_bypassed",
+    "validation_performed"
+  ],
+  "title": "BreakGlassRecord",
+  "type": "object"
+}

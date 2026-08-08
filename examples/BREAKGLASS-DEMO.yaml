@@ -1,0 +1,12 @@
+audit_id: BG-001
+actor: terra
+reason: blocking_integration_repair
+scope:
+  - src/auth/AuthIntegration.java
+files_modified:
+  - src/auth/AuthIntegration.java
+normal_authority_bypassed: Terra performed a minimal integration repair normally assigned to Luna.
+validation_performed:
+  - integration tests passed
+  - git diff reviewed
+post_review_required: true
